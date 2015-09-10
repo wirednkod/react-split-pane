@@ -21,13 +21,22 @@ var Example = _react2['default'].createClass({
     render: function render() {
         return _react2['default'].createElement(
             _libSplitPane2['default'],
-            { split: 'vertical', minSize: '50', defaultSize: '100', maxSize: '500' },
-            _react2['default'].createElement('div', null),
+            { split: 'horizontal', defaultSize: 'auto', resizable: 'false' },
+            _react2['default'].createElement(
+                'div',
+                { style: { height: "200px" } },
+                'sadas'
+            ),
             _react2['default'].createElement(
                 _libSplitPane2['default'],
-                { split: 'horizontal' },
+                { split: 'vertical', minSize: '50', defaultSize: '100', maxSize: '500' },
                 _react2['default'].createElement('div', null),
-                _react2['default'].createElement('div', null)
+                _react2['default'].createElement(
+                    _libSplitPane2['default'],
+                    { split: 'horizontal' },
+                    _react2['default'].createElement('div', null),
+                    _react2['default'].createElement('div', null)
+                )
             )
         );
     }
@@ -117,7 +126,6 @@ var Pane = (function (_Component) {
         value: function render() {
             var split = this.props.split;
             var classes = ['Pane', split];
-
             var style = {
                 flex: 1,
                 position: 'relative',
@@ -134,7 +142,6 @@ var Pane = (function (_Component) {
                 style.flex = 'none';
             }
             var prefixed = _reactVendorPrefix2['default'].prefix({ styles: style });
-
             return _react2['default'].createElement('div', { className: classes.join(' '), style: prefixed.styles }, this.props.children);
         }
     }]);
@@ -323,9 +330,11 @@ var SplitPane = (function (_Component) {
     _classCallCheck(this, SplitPane);
 
     _get(Object.getPrototypeOf(SplitPane.prototype), "constructor", this).call(this);
-    this.state = {
+    var self = this;
+    self.state = {
       active: false,
       resized: false,
+      resizable: true,
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight
     };
@@ -339,33 +348,49 @@ var SplitPane = (function (_Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      var ref = this.refs.pane1;
-      if (ref && this.props.defaultSize && !this.state.resized) {
-        ref.setState({
-          size: this.props.defaultSize
-        });
+      var self = this;
+      var ref = self.refs.pane1;
+      if (ref && self.props.defaultSize && !self.state.resized) {
+        var defaultSize = self.props.defaultSize;
+        if (defaultSize === 'auto') {
+          var element = _reactDom2["default"].findDOMNode(ref);
+          var total_height = 0;
+          for (var i in element.children) {
+            total_height += element.children[i].clientHeight || 0;
+          }
+          ref.setState({
+            size: total_height
+          });
+        } else {
+          ref.setState({
+            size: defaultSize
+          });
+        }
       }
-      window.addEventListener('resize', this.handleResize);
+      window.addEventListener('resize', self.handleResize);
     }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
-      window.removeEventListener('resize', this.handleResize);
+      var self = this;
+      window.removeEventListener('resize', self.handleResize);
     }
   }, {
     key: "onMouseDown",
     value: function onMouseDown(event) {
       var self = this;
-      var position = self.props.split === 'vertical' ? event.screenX : event.screenY;
-      var ref = self.refs.pane1;
-      var size = self.getRefSize(ref);
-      self.setState({
-        active: true,
-        startPosition: position,
-        startSize: size
-      });
-      document.addEventListener('mouseup', self.onMouseUp.bind(self));
-      document.addEventListener('mousemove', self.onMouseMove.bind(self));
+      if (self.props.resizable === true) {
+        var position = self.props.split === 'vertical' ? event.screenX : event.screenY;
+        var ref = self.refs.pane1;
+        var size = self.getRefSize(ref);
+        self.setState({
+          active: true,
+          startPosition: position,
+          startSize: size
+        });
+        document.addEventListener('mouseup', self.onMouseUp.bind(self));
+        document.addEventListener('mousemove', self.onMouseMove.bind(self));
+      }
     }
   }, {
     key: "onMouseUp",
@@ -480,7 +505,7 @@ var SplitPane = (function (_Component) {
       console.log(this.props.className, 'className');
       var prefixed = _reactVendorPrefix2["default"].prefix({ styles: style });
 
-      return _react2["default"].createElement("div", { className: classes.join(' '), style: prefixed.styles, ref: "splitPane", winsize: self.state.windowWidth }, _react2["default"].createElement(_Pane2["default"], { ref: "pane1", key: "pane1", split: split }, children[0]), _react2["default"].createElement(_Resizer2["default"], { ref: "resizer", key: "resizer", onMouseDown: self.onMouseDown.bind(self), split: split }), _react2["default"].createElement(_Pane2["default"], { ref: "pane2", key: "pane2", split: split }, children[1]));
+      return _react2["default"].createElement("div", { className: classes.join(' '), style: prefixed.styles, ref: "splitPane" }, _react2["default"].createElement(_Pane2["default"], { ref: "pane1", key: "pane1", split: split }, children[0]), _react2["default"].createElement(_Resizer2["default"], { ref: "resizer", key: "resizer", onMouseDown: self.onMouseDown.bind(self), split: split }), _react2["default"].createElement(_Pane2["default"], { ref: "pane2", key: "pane2", split: split }, children[1]));
     }
   }]);
 
@@ -489,7 +514,9 @@ var SplitPane = (function (_Component) {
 
 SplitPane.defaultProps = {
   minSize: 0,
-  maxSize: Infinity
+  maxSize: Infinity,
+  defaultSize: 'auto',
+  resizable: true
 };
 
 exports["default"] = SplitPane;

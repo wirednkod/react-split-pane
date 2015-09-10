@@ -18,7 +18,6 @@ class Pane extends Component {
     render() {
         const split = this.props.split;
         const classes = ['Pane', split];
-
         let style = {
             flex: 1,
             position: 'relative',
@@ -35,7 +34,6 @@ class Pane extends Component {
             style.flex = 'none';
         }
         const prefixed = VendorPrefix.prefix({styles: style});
-
         return <div className={classes.join(' ')} style={prefixed.styles}>{this.props.children}</div>;
     }
 }

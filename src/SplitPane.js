@@ -15,9 +15,11 @@ class SplitPane extends Component {
 
     constructor() {
       super();
-      this.state = {
+      let self = this;
+      self.state = {
         active: false,
         resized: false,
+        resizable: true,
         windowWidth: window.innerWidth,
         windowHeight: window.innerHeight
       };
@@ -28,31 +30,47 @@ class SplitPane extends Component {
     }
 
     componentDidMount() {
-        const ref = this.refs.pane1;
-        if (ref && this.props.defaultSize && !this.state.resized) {
+        let self = this;
+        const ref = self.refs.pane1;
+        if (ref && self.props.defaultSize && !self.state.resized) {
+          let defaultSize = self.props.defaultSize;
+          if(defaultSize === 'auto') {
+            let element = ReactDOM.findDOMNode(ref);
+            let total_height = 0;
+            for (var i in element.children) {
+              total_height += element.children[i].clientHeight || 0;
+            }
             ref.setState({
-                size: this.props.defaultSize
+              size: total_height
             });
+          } else {
+            ref.setState({
+              size: defaultSize
+            });
+          }
         }
-        window.addEventListener('resize', this.handleResize);
+        window.addEventListener('resize', self.handleResize);
     }
 
     componentWillUnmount() {
-      window.removeEventListener('resize', this.handleResize);
+      let self = this;
+      window.removeEventListener('resize', self.handleResize);
     }
 
     onMouseDown(event) {
       let self = this;
-      let position = self.props.split === 'vertical' ? event.screenX : event.screenY;
-      let ref = self.refs.pane1;
-      let size = self.getRefSize(ref);
-      self.setState({
-        active: true,
-        startPosition: position,
-        startSize: size
-      });
-      document.addEventListener('mouseup', self.onMouseUp.bind(self));
-      document.addEventListener('mousemove', self.onMouseMove.bind(self));
+      if(self.props.resizable === true) {
+        let position = self.props.split === 'vertical' ? event.screenX : event.screenY;
+        let ref = self.refs.pane1;
+        let size = self.getRefSize(ref);
+        self.setState({
+          active: true,
+          startPosition: position,
+          startSize: size
+        });
+        document.addEventListener('mouseup', self.onMouseUp.bind(self));
+        document.addEventListener('mousemove', self.onMouseMove.bind(self));
+      }
     }
 
     onMouseUp() {
@@ -163,7 +181,7 @@ class SplitPane extends Component {
         const prefixed = VendorPrefix.prefix({styles: style});
 
         return (
-            <div className={classes.join(' ')} style={prefixed.styles} ref="splitPane" winsize={self.state.windowWidth}>
+            <div className={classes.join(' ')} style={prefixed.styles} ref="splitPane">
                 <Pane ref="pane1" key="pane1" split={split}>{children[0]}</Pane>
                 <Resizer ref="resizer" key="resizer" onMouseDown={self.onMouseDown.bind(self)} split={split} />
                 <Pane ref="pane2" key="pane2" split={split}>{children[1]}</Pane>
@@ -174,7 +192,9 @@ class SplitPane extends Component {
 
 SplitPane.defaultProps = {
   minSize: 0,
-  maxSize: Infinity
+  maxSize: Infinity,
+  defaultSize: 'auto',
+  resizable: true
 };
 
 export default SplitPane;

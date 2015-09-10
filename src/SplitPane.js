@@ -22,10 +22,30 @@ class SplitPane extends Component {
         windowWidth: window.innerWidth,
         windowHeight: window.innerHeight
       };
+      self.lastReportedRef = null;
+      window.addEventListener('resize', this, false);
     }
 
     handleResize() {
-      this.setState({windowWidth: window.innerWidth, windowHeight: window.innerHeight});
+      let self = this;
+      self.setState({windowWidth: window.innerWidth, windowHeight: window.innerHeight});
+      if(self.props.onSetSize) {
+        let ref = self.refs.pane1;
+        if(ref) {
+          let refSize = self.getRefSize(ref);
+          self.onSetSize(refSize);
+        }
+      }
+    }
+
+    onSetSize(refSize) {
+      let self = this;
+      if(self.props.onSetSize) {
+        if(refSize != self.lastReportedRef) {
+          self.lastReportedRef = refSize;
+          self.props.onSetSize(refSize);
+        }
+      }
     }
 
     componentDidMount() {
@@ -42,18 +62,35 @@ class SplitPane extends Component {
             ref.setState({
               size: total_height
             });
+            self.setState({
+              refSize: total_height
+            });
           } else {
             ref.setState({
               size: defaultSize
             });
           }
         }
-        window.addEventListener('resize', self.handleResize.bind(self));
+    }
+
+    handleEvent(event) {
+      let self = this;
+      switch(event.type) {
+        case 'mouseup':
+          self.onMouseUp(event);
+          break;
+        case 'mousemove':
+          self.onMouseMove(event);
+          break;
+        case 'resize':
+          self.handleResize(event);
+          break;
+      }
     }
 
     componentWillUnmount() {
       let self = this;
-      window.removeEventListener('resize', self.handleResize);
+      window.removeEventListener('resize', this, false);
     }
 
     onMouseDown(event) {
@@ -67,18 +104,24 @@ class SplitPane extends Component {
           startPosition: position,
           startSize: size
         });
-        document.addEventListener('mouseup', self.onMouseUp.bind(self));
-        document.addEventListener('mousemove', self.onMouseMove.bind(self));
+        document.addEventListener('mouseup', this, false);
+        document.addEventListener('mousemove', this, false);
       }
     }
 
     onMouseUp() {
       let self = this;
+      document.removeEventListener('mouseup', this, false);
+      document.removeEventListener('mousemove', this, false);
       self.setState({
         active: false
       });
-      document.removeEventListener('mouseup', self.onMouseUp);
-      document.removeEventListener('mousemove', self.onMouseMove);
+      if(self.props.onSetSize) {
+        let ref = self.refs.pane1;
+        if(ref) {
+          self.onSetSize(self.getRefSize(ref));
+        }
+      }
     }
 
     getRefSize(ref) {
@@ -119,16 +162,20 @@ class SplitPane extends Component {
           minSize = self.props.minSize;
         }
 
+        let finalSize = newSize;
+
+        if(newSize < self.props.minSize) { finalSize = self.props.minSize; }
+        if(newSize > self.props.maxSize) { finalSize = self.props.maxSize; }
+
         self.setState({
           position: current,
-          resized: true
+          resized: true,
+          refSize: finalSize
         });
 
-        if (newSize >= self.props.minSize && newSize <= self.props.maxSize) {
-          ref.setState({
-            size: newSize
-          });
-        }
+        ref.setState({
+          size: finalSize
+        });
       }
     }
 

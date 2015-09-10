@@ -18,6 +18,10 @@ var _libSplitPane2 = _interopRequireDefault(_libSplitPane);
 var Example = _react2['default'].createClass({
     displayName: 'Example',
 
+    onSize: function onSize(size) {
+        console.log('new size:', size, Math.random());
+    },
+
     render: function render() {
         return _react2['default'].createElement(
             _libSplitPane2['default'],
@@ -33,7 +37,7 @@ var Example = _react2['default'].createClass({
                 _react2['default'].createElement('div', null),
                 _react2['default'].createElement(
                     _libSplitPane2['default'],
-                    { split: 'horizontal' },
+                    { split: 'horizontal', onSetSize: this.onSize },
                     _react2['default'].createElement('div', null),
                     _react2['default'].createElement('div', null)
                 )
@@ -131,6 +135,8 @@ var Pane = (function (_Component) {
                 position: 'relative',
                 outline: 'none',
                 overflow: 'auto',
+                minHeight: '1em',
+                minWidth: '1em',
                 maxHeight: '100%',
                 maxWidth: '100%'
             };
@@ -235,7 +241,7 @@ var Resizer = (function (_Component) {
         key: 'render',
         value: function render() {
             var self = this;
-            var split = this.props.split;
+            var split = self.props.split;
             var classes = ['Resizer', split];
             return _react2['default'].createElement('span', { className: classes.join(' '), onMouseDown: self.onMouseDown.bind(self) });
         }
@@ -339,12 +345,33 @@ var SplitPane = (function (_Component) {
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight
     };
+    self.lastReportedRef = null;
+    window.addEventListener('resize', this, false);
   }
 
   _createClass(SplitPane, [{
     key: "handleResize",
     value: function handleResize() {
-      this.setState({ windowWidth: window.innerWidth, windowHeight: window.innerHeight });
+      var self = this;
+      self.setState({ windowWidth: window.innerWidth, windowHeight: window.innerHeight });
+      if (self.props.onSetSize) {
+        var ref = self.refs.pane1;
+        if (ref) {
+          var refSize = self.getRefSize(ref);
+          self.onSetSize(refSize);
+        }
+      }
+    }
+  }, {
+    key: "onSetSize",
+    value: function onSetSize(refSize) {
+      var self = this;
+      if (self.props.onSetSize) {
+        if (refSize != self.lastReportedRef) {
+          self.lastReportedRef = refSize;
+          self.props.onSetSize(refSize);
+        }
+      }
     }
   }, {
     key: "componentDidMount",
@@ -362,19 +389,37 @@ var SplitPane = (function (_Component) {
           ref.setState({
             size: total_height
           });
+          self.setState({
+            refSize: total_height
+          });
         } else {
           ref.setState({
             size: defaultSize
           });
         }
       }
-      window.addEventListener('resize', self.handleResize.bind(self));
+    }
+  }, {
+    key: "handleEvent",
+    value: function handleEvent(event) {
+      var self = this;
+      switch (event.type) {
+        case 'mouseup':
+          self.onMouseUp(event);
+          break;
+        case 'mousemove':
+          self.onMouseMove(event);
+          break;
+        case 'resize':
+          self.handleResize(event);
+          break;
+      }
     }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
       var self = this;
-      window.removeEventListener('resize', self.handleResize);
+      window.removeEventListener('resize', this, false);
     }
   }, {
     key: "onMouseDown",
@@ -389,19 +434,25 @@ var SplitPane = (function (_Component) {
           startPosition: position,
           startSize: size
         });
-        document.addEventListener('mouseup', self.onMouseUp.bind(self));
-        document.addEventListener('mousemove', self.onMouseMove.bind(self));
+        document.addEventListener('mouseup', this, false);
+        document.addEventListener('mousemove', this, false);
       }
     }
   }, {
     key: "onMouseUp",
     value: function onMouseUp() {
       var self = this;
+      document.removeEventListener('mouseup', this, false);
+      document.removeEventListener('mousemove', this, false);
       self.setState({
         active: false
       });
-      document.removeEventListener('mouseup', self.onMouseUp);
-      document.removeEventListener('mousemove', self.onMouseMove);
+      if (self.props.onSetSize) {
+        var ref = self.refs.pane1;
+        if (ref) {
+          self.onSetSize(self.getRefSize(ref));
+        }
+      }
     }
   }, {
     key: "getRefSize",
@@ -444,16 +495,24 @@ var SplitPane = (function (_Component) {
           minSize = self.props.minSize;
         }
 
+        var finalSize = newSize;
+
+        if (newSize < self.props.minSize) {
+          finalSize = self.props.minSize;
+        }
+        if (newSize > self.props.maxSize) {
+          finalSize = self.props.maxSize;
+        }
+
         self.setState({
           position: current,
-          resized: true
+          resized: true,
+          refSize: finalSize
         });
 
-        if (newSize >= self.props.minSize && newSize <= self.props.maxSize) {
-          ref.setState({
-            size: newSize
-          });
-        }
+        ref.setState({
+          size: finalSize
+        });
       }
     }
   }, {

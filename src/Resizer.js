@@ -20,7 +20,7 @@ class Resizer extends Component {
 
   render() {
       let self = this;
-      const split = this.props.split;
+      const split = self.props.split;
       const classes = ['Resizer', split];
       return <span className={classes.join(' ')} onMouseDown={self.onMouseDown.bind(self)} />;
   }

@@ -28,7 +28,6 @@ Check out the [demo](http://zonked-knife.surge.sh/)
 ```
 ##Sizing elements
 
-<<<<<<< HEAD
 ### minSize property
 
 #####default = 11 (size of the resizer)
@@ -44,7 +43,7 @@ This property allows you to set the minimum size of a SplitPane. For example, if
 
 ### maxSize property
 
-#####default = size of your screen 
+#####default = size of your screen
 
 This property allows you to set the maximum size of a SplitPane. For example, if you set maxSize={300} it will not allow the second panel to get smaller than 300 pixels.
 
@@ -71,13 +70,7 @@ This property allows you to set the initial size of SplitPane. For example, if y
 
 #####You can combine or use separetly each of those properties.
 
-
-
-
-##Example styling
-=======
 ### Example styling
->>>>>>> a0051b8f75fed8f7f152ca8fde7b95856e0b3352
 
 This gives a single pixel wide divider, but with a 'grabbable' surface of 11 pixels.
 
@@ -85,7 +78,7 @@ Thanks to ```background-clip: padding-box;``` for making transparent borders pos
 
 
 ```css
-    
+
     .Resizer {
         background: #000;
         opacity: .2;
@@ -131,4 +124,3 @@ Thanks to ```background-clip: padding-box;``` for making transparent borders pos
         border-right: 5px solid rgba(0, 0, 0, 0.5);
     }
  ```
-

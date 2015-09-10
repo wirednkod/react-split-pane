@@ -29,8 +29,7 @@ node_modules
 
 .idea
 *.iml
-<<<<<<< HEAD
-lib
+
 
 node_modules
 node_modules/*
@@ -44,6 +43,5 @@ __MACOSX
 Thumbs.db
 Icon?
 npm-debug.log
-=======
+lib
 /lib
->>>>>>> a0051b8f75fed8f7f152ca8fde7b95856e0b3352

@@ -22,7 +22,11 @@ class Pane extends Component {
             flex: 1,
             position: 'relative',
             outline: 'none',
-            overflow: 'auto'
+            overflow: 'auto',
+            minHeight: '10px',
+            minWidth: '10px',
+            maxHeight: '100%',
+            maxWidth: '100%'
         };
         if (this.state.size) {
             if (split === 'horizontal') {

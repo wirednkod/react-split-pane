@@ -177,7 +177,7 @@ class SplitPane extends Component {
 
         const children = this.props.children;
         const classes = ['SplitPane', split];
-        console.log(this.props.className, 'className');
+        //console.log(this.props.className, 'className');
         const prefixed = VendorPrefix.prefix({styles: style});
 
         return (

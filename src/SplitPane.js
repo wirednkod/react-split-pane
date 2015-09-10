@@ -6,6 +6,7 @@
 'use strict';
 
 import React, { Component } from "react";
+import ReactDOM from "react-dom";
 import Pane from './Pane';
 import Resizer from './Resizer';
 import VendorPrefix from 'react-vendor-prefix';
@@ -24,13 +25,6 @@ class SplitPane extends Component {
 
     handleResize() {
       this.setState({windowWidth: window.innerWidth, windowHeight: window.innerHeight});
-    }
-
-    getDefaultProps() {
-      return {
-        minSize: 0,
-        maxSize: Infinity
-      };
     }
 
     componentDidMount() {
@@ -64,7 +58,7 @@ class SplitPane extends Component {
       if (self.state.active) {
             let ref = this.refs.pane1;
             if (ref) {
-              const element = React.findDOMNode(ref);
+              const element = ReactDOM.findDOMNode(ref);
               const styles = element.currentStyle ? element.currentStyle : window.getComputedStyle(element, null);
               const width = styles.width.replace('px', '');
               const height = styles.height.replace('px', '');
@@ -164,5 +158,15 @@ class SplitPane extends Component {
         );
     }
 }
+
+SplitPane.defaultProps = {
+  minSize: 0,
+  maxSize: Infinity
+};
+
+SplitPane.propTypes = {
+  minSize: React.PropTypes.number,
+  maxSize: React.PropTypes.number
+};
 
 export default SplitPane;

@@ -23,6 +23,8 @@ class Pane extends Component {
             position: 'relative',
             outline: 'none',
             overflow: 'auto',
+            minHeight: '1em',
+            minWidth: '1em',
             maxHeight: '100%',
             maxWidth: '100%'
         };

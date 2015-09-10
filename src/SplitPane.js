@@ -8,49 +8,41 @@ import VendorPrefix from 'react-vendor-prefix';
 
 let SplitPane = React.createClass({
 
-
-    propTypes: {
-        minSize: React.PropTypes.number,
-        size: React.PropTypes.number,
-        maxSize: React.PropTypes.number,
-        orientation: React.PropTypes.string
-    },
-
     getInitialState() {
 
         return {
-            active: false
-        }
+            active: false,
+            resized: false
+        };
     },
+
 
     getDefaultProps() {
         return {
             minSize: 0
-        }
+        };
     },
+
 
     componentDidMount() {
-        document.addEventListener('mouseup', this.up);
-        document.addEventListener('mousemove', this.move);
+        document.addEventListener('mouseup', this.onMouseUp);
+        document.addEventListener('mousemove', this.onMouseMove);
         const ref = this.refs.pane1;
-        if (ref){
-            if (this.props.defaultSize) {
-                ref.setState({
-                    size: this.props.defaultSize
-                });
-            }
+        if (ref && this.props.defaultSize && !this.state.resized) {
+            ref.setState({
+                size: this.props.defaultSize
+            });
         }
     },
 
-
     componentWillUnmount() {
-        document.removeEventListener('mouseup', this.up);
-        document.removeEventListener('mousemove', this.move);
+        document.removeEventListener('mouseup', this.onMouseUp);
+        document.removeEventListener('mousemove', this.onMouseMove);
     },
 
 
-    down(event) {
-        let position = this.props.orientation === 'horizontal' ? event.clientX : event.clientY;
+    onMouseDown(event) {
+        let position = this.props.split === 'vertical' ? event.clientX : event.clientY;
         this.setState({
             active: true,
             position: position
@@ -58,7 +50,7 @@ let SplitPane = React.createClass({
     },
 
 
-    move(event) {
+    onMouseMove(event) {
         if (this.state.active) {
             const ref = this.refs.pane1;
             if (ref) {
@@ -67,11 +59,12 @@ let SplitPane = React.createClass({
                     const styles = window.getComputedStyle(node);
                     const width = styles.width.replace('px', '');
                     const height = styles.height.replace('px', '');
-                    const current = this.props.orientation === 'horizontal' ? event.clientX : event.clientY;
-                    const size = this.props.orientation === 'horizontal' ? width : height;
+                    const current = this.props.split === 'vertical' ? event.clientX : event.clientY;
+                    const size = this.props.split === 'vertical' ? width : height;
                     const position = this.state.position;
+
                     const newSize = size - (position - current);
-                    
+
                     if(!this.props.maxSize){
                         var maxSize = this.props.orientation === 'horizontal' ? window.innerWidth - 11 : window.innerHeight - 11;
                     }else{
@@ -83,9 +76,11 @@ let SplitPane = React.createClass({
                         var minSize = this.props.minSize;
                     };
                     this.setState({
-                        position: current
+                        position: current,
+                        resized: true
                     });
-                    if (newSize >= minSize && newSize <= maxSize) {
+
+                    if (newSize >= this.props.minSize && newSize <= this.props.maxSize) {
                         ref.setState({
                             size: newSize
                         });
@@ -97,7 +92,7 @@ let SplitPane = React.createClass({
     },
 
 
-    up() {
+    onMouseUp() {
         this.setState({
             active: false
         });
@@ -112,7 +107,8 @@ let SplitPane = React.createClass({
 
 
     render() {
-        const orientation = this.props.orientation;
+
+        const split = this.props.split || 'vertical';
 
         let style = {
             display: 'flex',
@@ -122,7 +118,8 @@ let SplitPane = React.createClass({
             overflow: 'hidden',
             userSelect: 'none'
         };
-        if (orientation === 'vertical') {
+
+        if (split === 'horizontal') {
             this.merge(style, {
                 flexDirection: 'column',
                 height: '100%',
@@ -141,20 +138,18 @@ let SplitPane = React.createClass({
                 right: 0
             });
         }
-        let elements = [];
-        let children = this.props.children;
-        const child0 = children[0];
-        const child1 = children[1];
-        elements.push(<Pane ref="pane1" key="pane1" orientation={orientation}>{child0}</Pane>);
-        elements.push(<Resizer ref="resizer" key="resizer" down={this.down} orientation={orientation} />);
-        elements.push(<Pane ref="pane2" key="pane2" orientation={orientation}>{child1}</Pane>);
 
-        const classes = ['SplitPane', orientation];
-
+        const children = this.props.children;
+        const classes = ['SplitPane', split];
         const prefixed = VendorPrefix.prefix({styles: style});
 
-
-        return <div className={classes.join(' ')} style={prefixed.styles} ref="splitPane">{elements}</div>
+        return (
+            <div className={classes.join(' ')} style={prefixed.styles} ref="splitPane">
+                <Pane ref="pane1" key="pane1" split={split}>{children[0]}</Pane>
+                <Resizer ref="resizer" key="resizer" onMouseDown={this.onMouseDown} split={split} />
+                <Pane ref="pane2" key="pane2" split={split}>{children[1]}</Pane>
+            </div>
+        );
     }
 });
 

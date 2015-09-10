@@ -1,16 +1,18 @@
+'use strict';
+
 import React from 'react';
 
 
 let Resizer = React.createClass({
 
-    handleDown(event) {
-        this.props.down(event);
+    onMouseDown(event) {
+        this.props.onMouseDown(event);
     },
 
     render() {
-        const orientation = this.props.orientation;
-        const classes = ['Resizer', orientation];
-        return <span className={classes.join(' ')} onMouseDown={this.handleDown} />
+        const split = this.props.split;
+        const classes = ['Resizer', split];
+        return <span className={classes.join(' ')} onMouseDown={this.onMouseDown} />
     }
 });
 

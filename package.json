@@ -15,19 +15,19 @@
     "es6"
   ],
   "dependencies": {
-    "react": "^0.13.1",
+    "react": "^0.13.3",
     "react-vendor-prefix": "0.0.1"
   },
   "devDependencies": {
-    "babel-core": "^4.6.6",
-    "babelify": "^5.0.4",
-    "browserify": "^9.0.3",
-    "react-tools": "^0.13.0-rc1",
+    "babel-core": "^5.4.7",
+    "babelify": "^6.1.2",
+    "browserify": "^10.2.1",
+    "react-tools": "^0.13.3",
     "coveralls": "^2.11.2",
     "expect.js": "^0.3.1",
-    "express": "^4.12.2",
-    "mochify": "^2.6.0",
-    "mochify-istanbul": "^2.1.1"
+    "express": "^4.12.4",
+    "mochify": "^2.8.1",
+    "mochify-istanbul": "^2.1.2"
   },
   "scripts": {
     "test": "mochify -R spec",

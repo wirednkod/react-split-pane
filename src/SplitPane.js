@@ -164,9 +164,4 @@ SplitPane.defaultProps = {
   maxSize: Infinity
 };
 
-SplitPane.propTypes = {
-  minSize: React.PropTypes.number,
-  maxSize: React.PropTypes.number
-};
-
 export default SplitPane;

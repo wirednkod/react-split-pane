@@ -28,81 +28,93 @@ class SplitPane extends Component {
     }
 
     componentDidMount() {
-        window.addEventListener('resize', this.handleResize);
-        document.addEventListener('mouseup', this.onMouseUp.bind(this));
-        document.addEventListener('mousemove', this.onMouseMove.bind(this));
         const ref = this.refs.pane1;
         if (ref && this.props.defaultSize && !this.state.resized) {
             ref.setState({
                 size: this.props.defaultSize
             });
         }
+        window.addEventListener('resize', this.handleResize);
     }
 
     componentWillUnmount() {
       window.removeEventListener('resize', this.handleResize);
-      document.removeEventListener('mouseup', this.onMouseUp);
-      document.removeEventListener('mousemove', this.onMouseMove);
     }
 
     onMouseDown(event) {
-      let position = this.props.split === 'vertical' ? event.clientX : event.clientY;
-      this.setState({
+      let self = this;
+      let position = self.props.split === 'vertical' ? event.screenX : event.screenY;
+      let ref = self.refs.pane1;
+      let size = self.getRefSize(ref);
+      self.setState({
         active: true,
-        position: position
+        startPosition: position,
+        startSize: size
       });
+      document.addEventListener('mouseup', self.onMouseUp.bind(self));
+      document.addEventListener('mousemove', self.onMouseMove.bind(self));
+    }
+
+    onMouseUp() {
+      let self = this;
+      self.setState({
+        active: false
+      });
+      document.removeEventListener('mouseup', self.onMouseUp);
+      document.removeEventListener('mousemove', self.onMouseMove);
+    }
+
+    getRefSize(ref) {
+      let self = this;
+      if (ref) {
+        const element = ReactDOM.findDOMNode(ref);
+        const styles = element.currentStyle ? element.currentStyle : window.getComputedStyle(element, null);
+        const width = styles.width.replace('px', '');
+        const height = styles.height.replace('px', '');
+        const size = self.props.split === 'vertical' ? width : height;
+        return size;
+      } else {
+        return 0;
+      }
     }
 
     onMouseMove(event) {
       let self = this;
-      if (self.state.active) {
-            let ref = this.refs.pane1;
-            if (ref) {
-              const element = ReactDOM.findDOMNode(ref);
-              const styles = element.currentStyle ? element.currentStyle : window.getComputedStyle(element, null);
-              const width = styles.width.replace('px', '');
-              const height = styles.height.replace('px', '');
-              const current = self.props.split === 'vertical' ? event.clientX : event.clientY;
-              const size = self.props.split === 'vertical' ? width : height;
-              const position = self.state.position;
-              const newSize = size - (position - current);
+      let ref = self.refs.pane1;
+      if (self.state.active && ref) {
 
-              let maxSize;
-              let minSize;
+        const current = self.props.split === 'vertical' ? event.screenX : event.screenY;
+        const starting = self.state.startPosition;
+        const newSize = self.state.startSize - (starting - current);
 
-              if(!self.props.maxSize){
-                maxSize = self.props.split === 'horizontal' ? self.state.windowWidth - 11 : self.state.windowHeight - 11;
-              } else {
-                maxSize = self.props.maxSize;
-              }
+        let maxSize;
+        let minSize;
 
-              if(!self.props.minSize){
-                minSize = 5;
-              } else {
-                minSize = self.props.minSize;
-              }
-
-              this.setState({
-                position: current,
-                resized: true
-              });
-
-              if (newSize >= self.props.minSize && newSize <= self.props.maxSize) {
-                ref.setState({
-                  size: newSize
-                });
-              }
-
-              //console.log(maxSize, self.props.minSize, newSize);
-            }
+        if(!self.props.maxSize){
+          maxSize = self.props.split === 'horizontal' ? self.state.windowWidth - 11 : self.state.windowHeight - 11;
+        } else {
+          maxSize = self.props.maxSize;
         }
-    }
 
+        if(!self.props.minSize){
+          minSize = 5;
+        } else {
+          minSize = self.props.minSize;
+        }
 
-    onMouseUp() {
-      this.setState({
-        active: false
-      });
+        self.setState({
+          position: current,
+          resized: true
+        });
+
+        if (newSize >= self.props.minSize && newSize <= self.props.maxSize) {
+          ref.setState({
+            size: newSize
+          });
+        }
+      }
+
+        //console.log(maxSize, self.props.minSize, newSize);
     }
 
     merge(into, obj) {

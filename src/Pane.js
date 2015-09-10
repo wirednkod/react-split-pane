@@ -1,16 +1,19 @@
+// jshint esnext: true
+// jshint strict: true
+// jshint browser: true
+// jshint node: true
+
 'use strict';
 
-import React from 'react';
+import React, { Component } from "react";
 import VendorPrefix from 'react-vendor-prefix';
 
+class Pane extends Component {
 
-let Pane = React.createClass({
-
-
-    getInitialState() {
-        return {};
-    },
-
+    constructor() {
+        super();
+        this.state = {};
+    }
 
     render() {
         const split = this.props.split;
@@ -35,7 +38,6 @@ let Pane = React.createClass({
 
         return <div className={classes.join(' ')} style={prefixed.styles}>{this.props.children}</div>;
     }
-});
-
+}
 
 export default Pane;

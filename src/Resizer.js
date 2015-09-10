@@ -1,20 +1,30 @@
+// jshint esnext: true
+// jshint strict: true
+// jshint browser: true
+// jshint node: true
+
 'use strict';
 
-import React from 'react';
+import React, { Component } from "react";
 
+class Resizer extends Component {
 
-let Resizer = React.createClass({
+  constructor() {
+      super();
+  }
 
-    onMouseDown(event) {
-        this.props.onMouseDown(event);
-    },
+  onMouseDown(event) {
+    let self = this;
+    self.props.onMouseDown(event);
+  }
 
-    render() {
-        const split = this.props.split;
-        const classes = ['Resizer', split];
-        return <span className={classes.join(' ')} onMouseDown={this.onMouseDown} />
-    }
-});
+  render() {
+      let self = this;
+      const split = this.props.split;
+      const classes = ['Resizer', split];
+      return <span className={classes.join(' ')} onMouseDown={self.onMouseDown.bind(self)} />;
+  }
+}
 
 
 export default Resizer;

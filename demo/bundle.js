@@ -7,6 +7,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
 var _libSplitPane = require('../lib/SplitPane');
 
 var _libSplitPane2 = _interopRequireDefault(_libSplitPane);
@@ -17,7 +21,7 @@ var Example = _react2['default'].createClass({
     render: function render() {
         return _react2['default'].createElement(
             _libSplitPane2['default'],
-            { split: 'vertical', minSize: '50', defaultSize: '100', maxSize: '2000' },
+            { split: 'vertical', minSize: '50', defaultSize: '100', maxSize: '500' },
             _react2['default'].createElement('div', null),
             _react2['default'].createElement(
                 _libSplitPane2['default'],
@@ -30,9 +34,9 @@ var Example = _react2['default'].createClass({
 
 });
 
-_react2['default'].render(_react2['default'].createElement(Example, null), document.body);
+_reactDom2['default'].render(_react2['default'].createElement(Example, null), document.getElementById('root'));
 
-},{"../lib/SplitPane":4,"react":162}],2:[function(require,module,exports){
+},{"../lib/SplitPane":4,"react":162,"react-dom":6}],2:[function(require,module,exports){
 // jshint esnext: true
 // jshint strict: true
 // jshint browser: true

@@ -338,7 +338,6 @@ var SplitPane = (function (_Component) {
     self.state = {
       active: false,
       resized: false,
-      resizable: true,
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight
     };
@@ -371,7 +370,7 @@ var SplitPane = (function (_Component) {
           });
         }
       }
-      window.addEventListener('resize', self.handleResize);
+      window.addEventListener('resize', self.handleResize.bind(self));
     }
   }, {
     key: "componentWillUnmount",
@@ -458,8 +457,6 @@ var SplitPane = (function (_Component) {
           });
         }
       }
-
-      //console.log(maxSize, self.props.minSize, newSize);
     }
   }, {
     key: "merge",

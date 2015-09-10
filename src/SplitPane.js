@@ -19,7 +19,6 @@ class SplitPane extends Component {
       self.state = {
         active: false,
         resized: false,
-        resizable: true,
         windowWidth: window.innerWidth,
         windowHeight: window.innerHeight
       };
@@ -49,7 +48,7 @@ class SplitPane extends Component {
             });
           }
         }
-        window.addEventListener('resize', self.handleResize);
+        window.addEventListener('resize', self.handleResize.bind(self));
     }
 
     componentWillUnmount() {
@@ -131,8 +130,6 @@ class SplitPane extends Component {
           });
         }
       }
-
-        //console.log(maxSize, self.props.minSize, newSize);
     }
 
     merge(into, obj) {

@@ -622,7 +622,6 @@ var SplitPane = (function (_Component) {
       var split = self.props.split || 'vertical';
       var children = self.props.children;
       var classes = ['SplitPane', split, self.props.className];
-      console.log("---> " + self.props.resizable);
       return _react2["default"].createElement("div", { className: classes.join(' '), style: [styles.base, styles[split]], ref: "splitPane" }, _react2["default"].createElement(_Pane2["default"], { ref: "pane1", key: "pane1", split: split }, children[0]), _react2["default"].createElement(_Resizer2["default"], { ref: "resizer", key: "resizer", onMouseDown: self.onMouseDown.bind(self), split: split, resizable: self.props.resizable }), _react2["default"].createElement(_Pane2["default"], { ref: "pane2", key: "pane2", split: split }, children[1]));
     }
   }]);

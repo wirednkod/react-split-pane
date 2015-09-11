@@ -210,7 +210,6 @@ class SplitPane extends Component {
         const split = self.props.split || 'vertical';
         const children = self.props.children;
         const classes = ['SplitPane', split, self.props.className];
-        console.log("---> " + self.props.resizable);
         return (
             <div className={classes.join(' ')} style={[styles.base, styles[split]]} ref="splitPane">
                 <Pane ref="pane1" key="pane1" split={split}>{children[0]}</Pane>

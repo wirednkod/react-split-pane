@@ -74,9 +74,7 @@ class Resizer extends Component {
       }
 
       const classes = ['Resizer', split, self.props.className];
-      // if(resizable) {
-        return <span style={[styles.base, extra_style]} onMouseDown={self.onMouseDown.bind(self)} />;
-      // }
+      return <span style={[styles.base, extra_style]} onMouseDown={self.onMouseDown.bind(self)} />;
   }
 }
 

@@ -10,7 +10,7 @@ var Example = React.createClass({
 
     render: function() {
         return (
-          <SplitPane split="horizontal" defaultSize="auto" resizable="false">
+          <SplitPane split="horizontal" defaultSize="auto" resizable={false}>
             <div style={{height: "200px"}}>Fixed height element (200px), not resizable</div>
             <SplitPane split="vertical" minSize="50" defaultSize="100" maxSize="500">
                 <div>Left</div>

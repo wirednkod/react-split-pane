@@ -205,21 +205,16 @@ class SplitPane extends Component {
       }
     }
 
-    merge(into, obj) {
-      for (let attr in obj) {
-        into[attr] = obj[attr];
-      }
-    }
-
     render() {
         let self = this;
         const split = self.props.split || 'vertical';
         const children = self.props.children;
         const classes = ['SplitPane', split, self.props.className];
+        console.log("---> " + self.props.resizable);
         return (
             <div className={classes.join(' ')} style={[styles.base, styles[split]]} ref="splitPane">
                 <Pane ref="pane1" key="pane1" split={split}>{children[0]}</Pane>
-                <Resizer ref="resizer" key="resizer" onMouseDown={self.onMouseDown.bind(self)} split={split} />
+                <Resizer ref="resizer" key="resizer" onMouseDown={self.onMouseDown.bind(self)} split={split} resizable={self.props.resizable} />
                 <Pane ref="pane2" key="pane2" split={split}>{children[1]}</Pane>
             </div>
         );

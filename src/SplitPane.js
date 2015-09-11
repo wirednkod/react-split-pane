@@ -151,7 +151,7 @@ class SplitPane extends Component {
         let minSize;
 
         if(!self.props.maxSize){
-          maxSize = self.props.split === 'horizontal' ? self.state.windowWidth - 11 : self.state.windowHeight - 11;
+          maxSize = self.props.split === 'vertical' ? self.state.windowHeight - 11 : self.state.windowWidth - 11;
         } else {
           maxSize = self.props.maxSize;
         }
@@ -199,24 +199,24 @@ class SplitPane extends Component {
             userSelect: 'none'
         };
 
-        if (split === 'horizontal') {
-            this.merge(style, {
-                flexDirection: 'column',
-                height: '100%',
-                minHeight: '100%',
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                width: '100%'
-            });
+        if (split === 'vertical') {
+          this.merge(style, {
+              flexDirection: 'row',
+              height: '100%',
+              position: 'absolute',
+              left: 0,
+              right: 0
+          });
         } else {
-            this.merge(style, {
-                flexDirection: 'row',
-                height: '100%',
-                position: 'absolute',
-                left: 0,
-                right: 0
-            });
+          this.merge(style, {
+              flexDirection: 'column',
+              height: '100%',
+              minHeight: '100%',
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              width: '100%'
+          });
         }
 
         const children = this.props.children;

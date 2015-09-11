@@ -6,8 +6,9 @@
 'use strict';
 
 import React, { Component } from "react";
-import VendorPrefix from 'react-vendor-prefix';
+import Radium from "radium";
 
+@Radium
 class Pane extends Component {
 
     constructor() {
@@ -16,8 +17,9 @@ class Pane extends Component {
     }
 
     render() {
-        const split = this.props.split;
-        const classes = ['Pane', split];
+        let self = this;
+        const split = self.props.split;
+        const classes = ['Pane', split, self.props.className];
         let style = {
             flex: 1,
             position: 'relative',
@@ -28,17 +30,16 @@ class Pane extends Component {
             maxHeight: '100%',
             maxWidth: '100%'
         };
-        if (this.state.size) {
+        if (self.state.size) {
             if (split === 'horizontal') {
-                style.height = this.state.size;
+                style.height = self.state.size;
                 style.display = 'flex';
             } else {
-                style.width = this.state.size;
+                style.width = self.state.size;
             }
             style.flex = 'none';
         }
-        const prefixed = VendorPrefix.prefix({styles: style});
-        return <div className={classes.join(' ')} style={prefixed.styles}>{this.props.children}</div>;
+        return <div className={classes.join(' ')} style={style}>{self.props.children}</div>;
     }
 }
 

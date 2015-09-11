@@ -9,8 +9,34 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import Pane from './Pane';
 import Resizer from './Resizer';
-import VendorPrefix from 'react-vendor-prefix';
+import Radium from "radium";
 
+const styles = {
+  base: {
+    display: 'flex',
+    flex: 1,
+    outline: 'none',
+    overflow: 'hidden',
+    userSelect: 'none',
+    position: 'absolute'
+  },
+  vertical: {
+    flexDirection: 'row',
+    height: '100%',
+    left: 0,
+    right: 0
+  },
+  horizontal: {
+    flexDirection: 'column',
+    height: '100%',
+    minHeight: '100%',
+    top: 0,
+    bottom: 0,
+    width: '100%'
+  }
+}
+
+@Radium
 class SplitPane extends Component {
 
     constructor() {
@@ -23,7 +49,7 @@ class SplitPane extends Component {
         windowHeight: window.innerHeight
       };
       self.lastReportedRef = null;
-      window.addEventListener('resize', this, false);
+      window.addEventListener('resize', self, false);
     }
 
     handleResize() {
@@ -90,7 +116,7 @@ class SplitPane extends Component {
 
     componentWillUnmount() {
       let self = this;
-      window.removeEventListener('resize', this, false);
+      window.removeEventListener('resize', self, false);
     }
 
     onMouseDown(event) {
@@ -104,15 +130,15 @@ class SplitPane extends Component {
           startPosition: position,
           startSize: size
         });
-        document.addEventListener('mouseup', this, false);
-        document.addEventListener('mousemove', this, false);
+        document.addEventListener('mouseup', self, false);
+        document.addEventListener('mousemove', self, false);
       }
     }
 
     onMouseUp() {
       let self = this;
-      document.removeEventListener('mouseup', this, false);
-      document.removeEventListener('mousemove', this, false);
+      document.removeEventListener('mouseup', self, false);
+      document.removeEventListener('mousemove', self, false);
       self.setState({
         active: false
       });
@@ -186,46 +212,12 @@ class SplitPane extends Component {
     }
 
     render() {
-
         let self = this;
         const split = self.props.split || 'vertical';
-
-        let style = {
-            display: 'flex',
-            flex: 1,
-            position: 'relative',
-            outline: 'none',
-            overflow: 'hidden',
-            userSelect: 'none'
-        };
-
-        if (split === 'vertical') {
-          this.merge(style, {
-              flexDirection: 'row',
-              height: '100%',
-              position: 'absolute',
-              left: 0,
-              right: 0
-          });
-        } else {
-          this.merge(style, {
-              flexDirection: 'column',
-              height: '100%',
-              minHeight: '100%',
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              width: '100%'
-          });
-        }
-
-        const children = this.props.children;
-        const classes = ['SplitPane', split];
-        //console.log(this.props.className, 'className');
-        const prefixed = VendorPrefix.prefix({styles: style});
-
+        const children = self.props.children;
+        const classes = ['SplitPane', split, self.props.className];
         return (
-            <div className={classes.join(' ')} style={prefixed.styles} ref="splitPane">
+            <div className={classes.join(' ')} style={[styles.base, styles[split]]} ref="splitPane">
                 <Pane ref="pane1" key="pane1" split={split}>{children[0]}</Pane>
                 <Resizer ref="resizer" key="resizer" onMouseDown={self.onMouseDown.bind(self)} split={split} />
                 <Pane ref="pane2" key="pane2" split={split}>{children[1]}</Pane>

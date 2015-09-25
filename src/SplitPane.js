@@ -213,7 +213,7 @@ class SplitPane extends Component {
         return (
             <div className={classes.join(' ')} style={[styles.base, styles[split]]} ref="splitPane">
                 <Pane ref="pane1" key="pane1" split={split}>{children[0]}</Pane>
-                <Resizer ref="resizer" key="resizer" onMouseDown={self.onMouseDown.bind(self)} split={split} resizable={self.props.resizable} />
+                <Resizer ref="resizer" key="resizer" onMouseDown={self.onMouseDown.bind(self)} split={split} resizable={self.props.resizable} resizerGripWidth={self.props.resizerGripWidth} resizerBorderWidth={self.props.resizerBorderWidth} />
                 <Pane ref="pane2" key="pane2" split={split}>{children[1]}</Pane>
             </div>
         );
@@ -224,7 +224,9 @@ SplitPane.defaultProps = {
   minSize: 0,
   maxSize: Infinity,
   defaultSize: 'auto',
-  resizable: true
+  resizable: true,
+  resizerBorderWidth: 1,
+  resizerGripWidth: 5
 };
 
 export default SplitPane;

@@ -19,19 +19,19 @@ const styles = {
     cursor: 'default',
     transition: 'all 0.5s ease'
   },
-  horizontal: {
-    height: '11px',
-    width: '100%',
-    margin: '-5px 0',
-    borderTop: '5px solid rgba(255, 255, 255, 0)',
-    borderBottom: '5px solid rgba(255, 255, 255, 0)'
+  hover_vertical: {
+   cursor: 'col-resize',
+     ':hover': {
+       borderLeftColor: 'rgba(0, 0, 0, 0.5)',
+       borderRightColor: 'rgba(0, 0, 0, 0.5)',
+     }
   },
-  vertical: {
-    width: '11px',
-    height: '100%',
-    margin: '0 -5px',
-    borderLeft: '5px solid rgba(255, 255, 255, 0)',
-    borderRight: '5px solid rgba(255, 255, 255, 0)'
+  hover_horizontal: {
+    cursor: 'row-resize',
+    ':hover': {
+      borderTopColor: 'rgba(0, 0, 0, 0.5)',
+      borderBottomColor: 'rgba(0, 0, 0, 0.5)',
+    }
   }
 };
 
@@ -42,6 +42,42 @@ class Resizer extends Component {
       super();
   }
 
+  getDynamicStyles() {
+    const gripWidth = +this.props.resizerGripWidth;
+    const borderWidth = +this.props.resizerBorderWidth;
+    let style = {
+      horizontal: {
+        height: `${borderWidth + gripWidth * 2}px`,
+        width: '100%',
+        marginTop: `-${gripWidth}px`,
+        marginRight: '0',
+        marginBottom: `-${gripWidth}px`,
+        marginLeft: '0',
+        borderTopWidth: `${gripWidth}px`,
+        borderTopStyle: 'solid',
+        borderTopColor: 'rgba(255, 255, 255, 0)',
+        borderBottomWidth: `${gripWidth}px`,
+        borderBottomStyle: 'solid',
+        borderBottomColor: 'rgba(255, 255, 255, 0)',
+      },
+      vertical: {
+        width: `${borderWidth + gripWidth * 2}px`,
+        height: '100%',
+        marginTop: '0',
+        marginRight: `-${gripWidth}px`,
+        marginBottom: '0',
+        marginLeft: `-${gripWidth}px`,
+        borderLeftWidth: `${gripWidth}px`,
+        borderLeftStyle: 'solid',
+        borderLeftColor: 'rgba(255, 255, 255, 0)',
+        borderRightWidth: `${gripWidth}px`,
+        borderRightStyle: 'solid',
+        borderRightColor: 'rgba(255, 255, 255, 0)',
+      }
+    }
+    return style;
+  }
+
   onMouseDown(event) {
     let self = this;
     self.props.onMouseDown(event);
@@ -50,33 +86,19 @@ class Resizer extends Component {
   render() {
       let self = this;
       const split = self.props.split;
-
-      let extra_style = ObjectAssign({}, styles.base, styles[split]);
-
+      const dynamic_styles = self.getDynamicStyles();
+      let extra_style = ObjectAssign({}, styles.base, dynamic_styles[split]);
       if(self.props.resizable.toString() === "true") {
-        if(split == 'vertical') {
-           extra_style = ObjectAssign({}, extra_style, {
-            cursor: 'col-resize',
-            ':hover': {
-              borderLeft: '5px solid rgba(0, 0, 0, 0.5)',
-              borderRight: '5px solid rgba(0, 0, 0, 0.5)'
-            }
-          });
-        } else {
-          extra_style = ObjectAssign({}, extra_style, {
-            cursor: 'row-resize',
-            ':hover': {
-              borderTop: '5px solid rgba(0, 0, 0, 0.5)',
-              borderBottom: '5px solid rgba(0, 0, 0, 0.5)',
-            }
-          });
-        }
+        extra_style = ObjectAssign({}, extra_style, styles['hover_'+split]);
       }
-
       const classes = ['Resizer', split, self.props.className];
       return <span style={[styles.base, extra_style]} onMouseDown={self.onMouseDown.bind(self)} />;
   }
 }
 
+Resizer.defaultProps = {
+  resizerBorderWidth: 1,
+  resizerGripWidth: 5
+};
 
 export default Resizer;

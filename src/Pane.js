@@ -25,6 +25,7 @@ class Pane extends Component {
             position: 'relative',
             outline: 'none',
             overflow: 'auto',
+            height: 'inherit',
             minHeight: '1em',
             minWidth: '1em',
             maxHeight: '100%',
